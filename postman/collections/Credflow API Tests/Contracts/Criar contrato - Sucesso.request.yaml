@@ -1,0 +1,31 @@
+$kind: http-request
+url: http://localhost:8080/contracts
+method: POST
+body:
+  type: json
+  content: '{\n  \"customerName\": \"Empresa XYZ\",\n  \"amount\":
+    5000,\n  \"status\": \"pending\"\n}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 201 ou 200', function () {
+          pm.expect(pm.response.code).to.be.oneOf([200, 201]);
+      });
+
+      pm.test('Response contém id', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property('id');
+      });
+
+      pm.test('Response contém dados corretos', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.customerName).to.eql('Empresa XYZ');
+          pm.expect(jsonData.amount).to.eql(5000);
+          pm.expect(jsonData.status).to.eql('pending');
+      });
+
+      // Salvar ID do contrato
+      var jsonData = pm.response.json();
+      pm.environment.set('contractId', jsonData.id);
+    language: text/javascript
+order: 1000

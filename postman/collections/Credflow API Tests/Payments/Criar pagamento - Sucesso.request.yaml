@@ -1,0 +1,31 @@
+$kind: http-request
+url: http://localhost:8080/payments
+method: POST
+body:
+  type: json
+  content: '{\n  \"contractId\": 1,\n  \"amount\": 1250,\n  \"method\":
+    \"credit_card\",\n  \"status\": \"pending\"\n}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 201 ou 200', function () {
+          pm.expect(pm.response.code).to.be.oneOf([200, 201]);
+      });
+
+      pm.test('Response contém id', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property('id');
+      });
+
+      pm.test('Response contém dados corretos', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.amount).to.eql(1250);
+          pm.expect(jsonData.method).to.eql('credit_card');
+          pm.expect(jsonData.status).to.eql('pending');
+      });
+
+      // Salvar ID do pagamento
+      var jsonData = pm.response.json();
+      pm.environment.set('paymentId', jsonData.id);
+    language: text/javascript
+order: 1000

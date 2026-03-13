@@ -1,0 +1,28 @@
+$kind: http-request
+name: Criar usuário - Email inválido
+url: http://localhost:8080/users
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Maria Santos\",\r
+
+    \  \"email\": \"email-invalido\",\r
+
+    \  \"password\": \"senha123\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 400 (Bad Request)', function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test('Response contém mensagem de erro', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.message).to.be.a('string');
+      });
+    language: text/javascript
+order: 2000

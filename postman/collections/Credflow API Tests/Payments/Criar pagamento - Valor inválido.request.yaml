@@ -1,0 +1,25 @@
+$kind: http-request
+name: Criar pagamento - Valor inválido
+url: http://localhost:8080/payments
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"contractId\": 1,\r
+
+    \  \"amount\": \"texto\",\r
+
+    \  \"method\": \"credit_card\",\r
+
+    \  \"status\": \"pending\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 400', function () {
+          pm.response.to.have.status(400);
+      });
+    language: text/javascript
+order: 2000

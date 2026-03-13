@@ -4,23 +4,30 @@ services:
     build: .
     container_name: credflow-api
     ports:
-      - "3000:3000"
+      - '8080:8080'
     environment:
       - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=1234
+      - DB_DATABASE=credflow-db
+      - DB_SYNCHRONIZE=true
+      - PORT=8080
     depends_on:
       - db
 
   db:
-    image: postgres:18.3
+    image: postgres:16-alpine
     container_name: credflow-db
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_DB: credflow-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  postgres_data_new:

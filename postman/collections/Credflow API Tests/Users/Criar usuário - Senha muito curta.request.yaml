@@ -1,0 +1,20 @@
+$kind: http-request
+url: http://localhost:8080/users
+method: POST
+body:
+  type: json
+  content: '{\n  \"name\": \"Pedro Costa\",\n  \"email\":
+    \"pedro@example.com\",\n  \"password\": \"123\"\n}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 400 (Bad Request)', function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test('Response contém erro sobre senha', function () {
+          var jsonData = pm.response.json();
+          pm.expect(JSON.stringify(jsonData)).to.include('password');
+      });
+    language: text/javascript
+order: 3000

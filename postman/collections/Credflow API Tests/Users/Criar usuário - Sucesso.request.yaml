@@ -1,0 +1,42 @@
+$kind: http-request
+name: Criar usuário - Sucesso
+url: http://localhost:8080/users
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"João Silva\",\r
+
+    \  \"email\": \"joao@example.com\",\r
+
+    \  \"password\": \"senha123\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 201 ou 200', function () {
+          pm.expect(pm.response.code).to.be.oneOf([200, 201]);
+      });
+
+      pm.test('Response contém id', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property('id');
+      });
+
+      pm.test('Response contém email do usuário', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.email).to.eql('joao@example.com');
+      });
+
+      pm.test('Response contém name do usuário', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.name).to.eql('João Silva');
+      });
+
+      // Salvar ID do usuário para usar em outros testes
+      var jsonData = pm.response.json();
+      pm.environment.set('userId', jsonData.id);
+    language: text/javascript
+order: 1000

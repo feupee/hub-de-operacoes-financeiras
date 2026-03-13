@@ -1,0 +1,27 @@
+$kind: http-request
+url: http://localhost:8080/payments
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code é 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test('Response é um array', function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData).to.be.an('array');
+      });
+
+      pm.test('Pagamentos contêm propriedades esperadas', function () {
+          var jsonData = pm.response.json();
+          if (jsonData.length > 0) {
+              pm.expect(jsonData[0]).to.have.property('id');
+              pm.expect(jsonData[0]).to.have.property('contractId');
+              pm.expect(jsonData[0]).to.have.property('amount');
+              pm.expect(jsonData[0]).to.have.property('method');
+              pm.expect(jsonData[0]).to.have.property('status');
+          }
+      });
+    language: text/javascript
+order: 3000
